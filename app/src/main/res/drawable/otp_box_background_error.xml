@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Error glow effect -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#26FF0000"/>
+            <corners android:radius="8dp"/>
+        </shape>
+    </item>
+
+    <!-- Main background -->
+    <item
+        android:left="1dp"
+        android:right="1dp"
+        android:top="1dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <!-- Background color -->
+            <solid android:color="#FFFFFF"/>
+
+            <!-- Rounded corners -->
+            <corners android:radius="8dp"/>
+
+            <!-- Error state border -->
+            <stroke
+                android:width="1.5dp"
+                android:color="#FF0000"/>
+        </shape>
+    </item>
+</layer-list>

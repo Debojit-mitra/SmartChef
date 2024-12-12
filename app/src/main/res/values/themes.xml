@@ -1,0 +1,149 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.SmartChef" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.SmartChef" parent="Base.Theme.SmartChef" />
+
+
+    <style name="Theme.Sugoi.SplashScreen" parent="Theme.SmartChef">
+        <!-- <item name="android:windowBackground">@color/legendary_green</item>-->
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">
+            @mipmap/ic_launcher_round
+        </item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="s">800</item>
+        <item name="android:windowSplashScreenBehavior" tools:targetApi="tiramisu">icon_preferred
+        </item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">?attr/colorPrimary
+        </item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.Sugoi.TryModel" parent="Theme.SmartChef">
+        <item name="android:navigationBarColor">@color/mode_inverse</item>
+    </style>
+
+    <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/mode_black</item>
+        <item name="boxBackgroundColor">@color/mode_white</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxCollapsedPaddingTop">5dp</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:textColorHint">@color/mode_black</item>
+        <item name="hintTextColor">@color/mode_black</item>
+        <item name="cursorColor">@color/mode_black</item>
+    </style>
+
+    <style name="CustomTextInputLayout2" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/mode_black</item>
+        <item name="boxBackgroundColor">@color/mode_white</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxCollapsedPaddingTop">5dp</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:textColorHint">@color/mode_black</item>
+        <item name="hintTextColor">@color/mode_black</item>
+        <item name="cursorColor">@color/mode_black</item>
+    </style>
+
+    <style name="CustomPrefixAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomTextInputEditText" parent="Widget.Material3.TextInputEditText.FilledBox">
+        <item name="android:padding">18dp</item>
+    </style>
+
+    <style name="CustomRadioButtonTheme" parent="Theme.SmartChef">
+        <item name="colorControlActivated">@color/mode_inverse</item>
+        <item name="colorControlNormal">@color/mode_inverse</item>
+        <item name="android:colorControlActivated">@color/mode_inverse</item>
+        <item name="android:colorControlNormal">@color/mode_inverse</item>
+    </style>
+
+    <!-- Style for the input chip with stroke -->
+    <style name="InputChipStyle" parent="Widget.MaterialComponents.Chip.Entry">
+        <item name="android:textColor">@color/mode</item>
+        <item name="android:textSize">16sp</item>
+        <item name="chipBackgroundColor">@color/mode_inverse</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipStrokeColor">@color/mode_black</item>
+        <item name="chipIconTint">@color/mode_black</item>
+        <item name="closeIconVisible">false</item>
+        <item name="rippleColor">@color/ripple_effect</item>
+    </style>
+
+    <!-- Style for selected cuisine chips matching input chip -->
+    <style name="SelectedCuisineChipStyle" parent="Widget.MaterialComponents.Chip.Entry">
+        <item name="android:textColor">@color/mode_black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="chipStrokeColor">@color/mode_inverse</item>
+        <item name="chipIconTint">@color/mode_black</item>
+        <item name="closeIconVisible">true</item>
+        <item name="closeIconTint">@color/mode_black</item>
+        <item name="rippleColor">@color/ripple_effect</item>
+        <item name="chipCornerRadius">16dp</item>
+    </style>
+
+    <style name="CustomDatePickerStyle" parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <!-- Selected day background color -->
+        <item name="colorPrimary">@color/mode</item>
+        <!-- Header background and selected text color -->
+        <item name="colorOnPrimary">@color/mode_inverse_extra</item>
+        <!-- Dialog background color -->
+        <item name="android:windowBackground">@color/mode</item>
+        <!-- Button text color (OK/Cancel) -->
+        <item name="buttonBarPositiveButtonStyle">@style/DatePickerButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DatePickerButtonStyle</item>
+        <!-- Month/year selector text -->
+        <item name="materialCalendarHeaderSelection">@style/DatePickerHeaderStyle</item>
+    </style>
+
+    <style name="DatePickerButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/mode_inverse</item> <!-- for ok and cancel btn -->
+    </style>
+
+    <style name="DatePickerHeaderStyle" parent="@style/Widget.Material3.MaterialCalendar.HeaderSelection"><!-- header date -->
+        <item name="android:textColor">@color/mode_inverse</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="android:navigationBarColor">@color/mode</item>
+    </style>
+
+
+    <style name="CustomMaterial3SwitchStyle" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <!-- Track colors -->
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.Switch</item>
+        <item name="trackTint">@color/switch_track_selector</item>
+        <item name="thumbTint">@color/switch_thumb_selector</item>
+        <!-- Material 3 specific properties -->
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <!-- Theme overlay to ensure Material 3 switch shape -->
+    <style name="ThemeOverlay.Material3.Switch" parent="">
+        <item name="switchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
+    </style>
+
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+
+</resources>

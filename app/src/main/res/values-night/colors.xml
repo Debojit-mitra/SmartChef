@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="mode">#1F1D1B</color>
+    <color name="mode_black">#1F1D1B</color>
+    <color name="mode_darker">#282623</color>
+    <color name="mode_darker_background">#141118</color>
+    <color name="mode_white">#FFF4E5</color>
+    <color name="mode_inverse">#FFF4E5</color>
+    <color name="mode_inverse_extra">#958F86</color>
+    <color name="mode_background">#141118</color>
+    <color name="ripple_effect">#316B6B6B</color>
+    <color name="ripple_effect_inverse">#31000000</color>
+
+
+    <!-- Switch Track Colors -->
+    <color name="switch_track_checked">#80FFF4E5</color>  <!-- mode_inverse at 50% opacity -->
+    <color name="switch_track_unchecked">#33FFF4E5</color>  <!-- mode_inverse at 20% opacity -->
+
+    <!-- Switch Thumb Colors -->
+    <color name="switch_thumb_checked">@color/mode_inverse</color>  <!-- FFF4E5 -->
+    <color name="switch_thumb_unchecked">@color/mode_inverse_extra</color>  <!-- 958F86 -->
+</resources>

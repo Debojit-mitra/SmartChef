@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragments.RegisterFragment1">
+
+    <TextView
+        android:id="@+id/createAccTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_an_account"
+        android:textColor="@color/mode_inverse"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/createAccDescTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.7"
+        android:text="@string/create_an_account_to_get_started"
+        android:textColor="@color/mode_inverse"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="@string/phone"
+        android:textColor="@color/mode_inverse"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/CustomTextInputLayout"
+        android:id="@+id/phoneNumberTextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:prefixText="+91"
+        app:prefixTextAppearance="@style/CustomPrefixAppearance"
+        app:prefixTextColor="@color/mode_black"
+        app:errorTextColor="@android:color/holo_red_light"
+        app:errorIconTint="@android:color/holo_red_light"
+        app:cursorErrorColor="@android:color/holo_red_light"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/mode_black"
+        android:hint="@string/enter_your_phone_number">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phoneNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_phone"
+            android:drawablePadding="12dp"
+            android:drawableTint="@color/mode_black"
+            android:inputType="phone"
+            android:maxLength="15"
+            style="@style/CustomTextInputEditText"
+            android:textColor="@color/mode_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/alreadyHaveAccLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/alreadyHaveAccTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:text="@string/already_have_an_account"
+            android:textColor="@color/mode_inverse"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/loginBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/button_card_ripple"
+            android:clickable="true"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/login"
+            android:textColor="@color/mode_inverse"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

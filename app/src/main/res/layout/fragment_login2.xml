@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragments.LoginFragment2">
+
+    <TextView
+        android:id="@+id/enterOtpTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_otp"
+        android:textColor="@color/mode_inverse"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_alignStart="@+id/otpView"
+        />
+
+    <TextView
+        android:id="@+id/enterOtpDescTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.7"
+        android:text="@string/enter_otp_sent_to_your_phone_number_911234567890"
+        android:textColor="@color/mode_inverse"
+        android:textSize="15sp"
+        android:layout_below="@+id/enterOtpTextview"
+        android:layout_alignStart="@+id/otpView"
+        />
+
+    <com.bunny.ml.smartchef.utils.CustomOTPView
+        android:id="@+id/otpView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        app:otpLength="6"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/wrongNumberLayout"
+        />
+
+    <LinearLayout
+        android:id="@+id/wrongNumberLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_alignStart="@id/otpView"
+        android:layout_below="@+id/enterOtpDescTextview"
+        >
+
+        <TextView
+            android:id="@+id/wrongNumberTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:text="@string/wrong_number"
+            android:textColor="@color/mode_inverse"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/reEnterNumberBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/button_card_ripple"
+            android:clickable="true"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/re_enter"
+            android:textColor="@color/mode_inverse"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/resendOtpLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_alignEnd="@id/otpView"
+        android:layout_below="@+id/otpView"
+        >
+
+        <TextView
+            android:id="@+id/resendOtpTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:text="@string/didn_t_receive_otp"
+            android:textColor="@color/mode_inverse"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/resendOtpBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/button_card_ripple"
+            android:clickable="true"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/resend"
+            android:textColor="@color/mode_inverse"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

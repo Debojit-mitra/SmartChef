@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragments.RegisterFragment3">
+
+    <TextView
+        android:id="@+id/createAccTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hey_there"
+        android:textColor="@color/mode_inverse"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/createAccDescTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.7"
+        android:text="@string/to_start_we_need_a_few_details"
+        android:textColor="@color/mode_inverse"
+        android:textSize="15sp"
+        android:justificationMode="inter_word" />
+
+    <include
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        layout="@layout/profile_image"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="@string/name"
+        android:textColor="@color/mode_inverse"
+        android:layout_marginTop="5dp"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nameTextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:errorTextColor="@android:color/holo_red_light"
+        app:errorIconTint="@android:color/holo_red_light"
+        app:cursorErrorColor="@android:color/holo_red_light"
+        android:hint="@string/what_may_we_call_you"
+        style="@style/CustomTextInputLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_person"
+            android:drawablePadding="12dp"
+            android:drawableTint="@color/mode_black"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLength="40"
+            style="@style/CustomTextInputEditText"
+            android:textColor="@color/mode_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="@string/date_of_birth"
+        android:textColor="@color/mode_inverse"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dobTextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:errorTextColor="@android:color/holo_red_light"
+        app:errorIconTint="@android:color/holo_red_light"
+        app:cursorErrorColor="@android:color/holo_red_light"
+        android:hint="@string/when_were_you_born"
+        style="@style/CustomTextInputLayout">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/dobEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_calendar"
+            android:drawablePadding="12dp"
+            android:drawableTint="@color/mode_black"
+            android:inputType="textPersonName"
+            android:maxLength="40"
+            style="@style/CustomTextInputEditText"
+            android:textColor="@color/mode_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="@string/gender"
+        android:textColor="@color/mode_inverse"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_character_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/radio_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/male"
+                android:textSize="15sp"
+                android:textColor="@color/mode_inverse" />
+            <RadioButton
+                android:id="@+id/radio_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/female"
+                android:textSize="15sp"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/mode_inverse" />
+            <RadioButton
+                android:id="@+id/radio_others"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/others"
+                android:textSize="15sp"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/mode_inverse"
+                />
+        </RadioGroup>
+
+
+    </LinearLayout>
