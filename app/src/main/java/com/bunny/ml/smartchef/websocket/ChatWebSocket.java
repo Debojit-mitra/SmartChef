@@ -29,6 +29,7 @@ public class ChatWebSocket {
     private static final int MAX_RETRIES = 3;
     private int retryCount = 0;
     private ProfileManager profileManager;
+    private boolean isReconnecting = false;
 
 
     public interface ChatCallback {
@@ -52,6 +53,10 @@ public class ChatWebSocket {
     }
 
     public void connect() {
+        if (isReconnecting) {
+            callback.onError("Reconnecting to server...");
+        }
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .pingInterval(10, TimeUnit.SECONDS)
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -59,7 +64,6 @@ public class ChatWebSocket {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        // Add chatId to URL if it exists
         String url = BASE_URL;
         if (chatId != null && !chatId.isEmpty()) {
             url += "?chat_id=" + chatId;
@@ -75,6 +79,7 @@ public class ChatWebSocket {
                 Log.d("ChatWebSocket", "WebSocket connected successfully");
                 mainHandler.post(() -> {
                     isConnected = true;
+                    isReconnecting = false;
                     retryCount = 0;
                     callback.onConnected();
                 });
@@ -159,12 +164,36 @@ public class ChatWebSocket {
         }
     }
 
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void ensureConnection() {
+        if (!isConnected && !isReconnecting) {
+            isReconnecting = true;
+            retryCount = 0; // Reset retry count
+            connect();
+        }
+    }
+
+
     public void sendMessage(String message) {
         if (!isConnected) {
-            callback.onError("Not connected to server");
+            ensureConnection();
+            // Queue the message to be sent after reconnection
+            mainHandler.postDelayed(() -> {
+                if (isConnected) {
+                    sendMessageInternal(message);
+                } else {
+                    callback.onError("Failed to reconnect to server");
+                }
+            }, 1000); // Wait for 1 second to allow reconnection
             return;
         }
+        sendMessageInternal(message);
+    }
 
+    private void sendMessageInternal(String message) {
         try {
             JSONObject json = new JSONObject();
             json.put("message", message);
@@ -174,8 +203,7 @@ public class ChatWebSocket {
             json.put("users_name", profileManager.getName());
             json.put("users_dob", profileManager.getDateOfBirth());
             json.put("users_gender", profileManager.getGender());
-            // Check for null or empty values and set "none" if they are
-            profileManager.getCuisinePreferences();
+
             String cuisinePreferences = !profileManager.getCuisinePreferences().isEmpty()
                     ? profileManager.getCuisinePreferences().toString()
                     : "none";
@@ -188,9 +216,14 @@ public class ChatWebSocket {
                     ? profileManager.getConditions()
                     : "none";
 
+            String healthConscious = (profileManager.getHealthConscious())
+                    ? "Yes"
+                    : "No";
+
             json.put("cuisinePreferences", cuisinePreferences);
             json.put("dietPreference", dietPreference);
             json.put("conditions", conditions);
+            json.put("healthConscious", healthConscious);
 
             webSocket.send(json.toString());
         } catch (Exception e) {

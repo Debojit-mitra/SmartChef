@@ -3,4 +3,12 @@
     <declare-styleable name="CustomOTPView">
         <attr name="otpLength" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="ExpandableLayout">
+        <attr name="isExpanded" format="boolean" />
+        <attr name="headerIcon" format="reference" />
+        <attr name="headerText" format="string" />
+        <attr name="headerIconTint" format="color" />
+        <attr name="expandIconTint" format="color" />
+    </declare-styleable>
 </resources>

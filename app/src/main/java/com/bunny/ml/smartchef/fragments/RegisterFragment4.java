@@ -44,7 +44,7 @@ public class RegisterFragment4 extends Fragment implements FirebaseManager.Fireb
     private final Set<String> selectedCuisines = new HashSet<>();
     private String[] cuisineTypes;
     private ListPopupWindow listPopupWindow;
-    private MaterialSwitch cookingMotivationSwitch;
+    private MaterialSwitch cookingMotivationSwitch, healthConsciousSwitch;
     private static final int MAX_CUISINE_SELECTIONS = 5;
     private LoadingDialog loadingDialog;
 
@@ -65,6 +65,7 @@ public class RegisterFragment4 extends Fragment implements FirebaseManager.Fireb
         cuisinePrefTextInput = view.findViewById(R.id.cuisinePrefTextInput);
         cuisineChipGroup = view.findViewById(R.id.cuisineChipGroup);
         cuisineInputChip = view.findViewById(R.id.cuisineInputChip);
+        healthConsciousSwitch = view.findViewById(R.id.healthConsciousSwitch);
         cookingMotivationSwitch = view.findViewById(R.id.cookingMotivationSwitch);
         loadingDialog = new LoadingDialog(requireContext());
 
@@ -217,6 +218,7 @@ public class RegisterFragment4 extends Fragment implements FirebaseManager.Fireb
         userData.setCuisinePreferencesFromSet(selectedCuisines);
         userData.setConditions(conditionsEditText.getText() != null ? conditionsEditText.getText().toString() : "");
         userData.setCookingMotivation(cookingMotivationSwitch.isChecked());
+        userData.setHealthConscious(healthConsciousSwitch.isChecked());
 
         // Use DatabaseManager instead of FirebaseManager
         DatabaseManager.getInstance(requireContext()).createOrUpdateUser(
@@ -255,6 +257,7 @@ public class RegisterFragment4 extends Fragment implements FirebaseManager.Fireb
             userData.setCuisinePreferencesFromSet(selectedCuisines);
             userData.setConditions(conditionsEditText.getText() != null ? conditionsEditText.getText().toString() : "");
             userData.setCookingMotivation(cookingMotivationSwitch.isChecked());
+            userData.setHealthConscious(healthConsciousSwitch.isChecked());
 
             // Initialize the profile cache before navigation
             ProfileManager.getInstance(requireContext()).initializeCache(new ProfileManager.ProfileCallback() {

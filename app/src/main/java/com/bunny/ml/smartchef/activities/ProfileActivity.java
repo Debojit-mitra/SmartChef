@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.RadioButton;
@@ -24,9 +25,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.bunny.ml.smartchef.MainActivity;
 import com.bunny.ml.smartchef.R;
 import com.bunny.ml.smartchef.firebase.ProfileManager;
 import com.bunny.ml.smartchef.models.UserData;
+import com.bunny.ml.smartchef.utils.CustomAlertDialog;
 import com.bunny.ml.smartchef.utils.LoadingDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -64,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextInputLayout cuisinePrefTextInput;
     private RadioGroup genderRadioGroup;
     private ChipGroup cuisineChipGroup;
-    private MaterialSwitch cookingMotivationSwitch;
+    private MaterialSwitch cookingMotivationSwitch, healthConsciousSwitch;
     private LoadingDialog loadingDialog;
     private ProfileManager profileManager;
     private Uri selectedImageUri;
@@ -121,6 +124,7 @@ public class ProfileActivity extends AppCompatActivity {
         cuisineChipGroup = findViewById(R.id.cuisineChipGroup);
         cuisineInputChip = findViewById(R.id.cuisineInputChip);
         cookingMotivationSwitch = findViewById(R.id.cookingMotivationSwitch);
+        healthConsciousSwitch = findViewById(R.id.healthConsciousSwitch);
         account_using_textview = findViewById(R.id.account_using_textview);
         logout_btn = findViewById(R.id.logout_btn);
         updateProfileBtn = findViewById(R.id.updateProfileBtn);
@@ -226,6 +230,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Cooking motivation change listener
         cookingMotivationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> checkForChanges());
+
+        healthConsciousSwitch.setOnCheckedChangeListener((compoundButton, b) -> checkForChanges());
     }
 
     private void setupImagePicker() {
@@ -406,7 +412,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (userData.getCuisinePreferences() != null) {
             selectedCuisines.clear();
             cuisineChipGroup.removeAllViews();
-            cuisineChipGroup.addView(cuisineInputChip);
+            cuisineChipGroup.addView(cuisineInputChip, 0);
 
             for (String cuisine : userData.getCuisinePreferences()) {
                 selectedCuisines.add(cuisine);
@@ -415,6 +421,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         cookingMotivationSwitch.setChecked(userData.isCookingMotivation());
+        healthConsciousSwitch.setChecked(userData.isHealthConscious());
 
         String yourAccountSetup = getString(R.string.your_account_is_using);
         if (userData.getPhoneNumber() != null && !userData.getPhoneNumber().isEmpty()) {
@@ -449,7 +456,7 @@ public class ProfileActivity extends AppCompatActivity {
             checkForChanges();
         });
 
-        cuisineChipGroup.addView(chip, cuisineChipGroup.getChildCount() - 1);
+        cuisineChipGroup.addView(chip, 1);
         checkForChanges();
     }
 
@@ -458,6 +465,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         loadingDialog.show("Updating profile");
         String phoneNumber = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getPhoneNumber();
+        String conditions = conditionsEditText.getText() != null ? conditionsEditText.getText().toString().trim() : "";
+
 
         UserData userData = new UserData.Builder()
                 .withName(Objects.requireNonNull(nameEditText.getText()).toString().trim())
@@ -465,8 +474,9 @@ public class ProfileActivity extends AppCompatActivity {
                 .withDateOfBirth(dobEditText.getText().toString().trim())
                 .withGender(getSelectedGender())
                 .withDietPreference(dietPrefEditText.getText().toString().trim())
-                .withConditions(conditionsEditText.getText().toString().trim())
+                .withConditions(conditions)
                 .withCuisinePreferences(new ArrayList<>(selectedCuisines))
+                .withHealthConscious(healthConsciousSwitch.isChecked())
                 .withCookingMotivation(cookingMotivationSwitch.isChecked())
                 .build();
 
@@ -586,11 +596,13 @@ public class ProfileActivity extends AppCompatActivity {
                 selectedCuisines.isEmpty() ? new HashSet<>() : selectedCuisines
         );
 
+        boolean hasHealthConsciousChange = originalUserData.isHealthConscious() != healthConsciousSwitch.isChecked();
+
         boolean hasMotivationChange = originalUserData.isCookingMotivation() != cookingMotivationSwitch.isChecked();
 
         boolean hasImageChange = selectedImageUri != null && !Objects.equals(selectedImageUri, originalImageUri);
 
-        hasChanges = hasNameChange || hasDobChange || hasDietChange || hasConditionsChange || hasGenderChange ||
+        hasChanges = hasNameChange || hasDobChange || hasDietChange || hasHealthConsciousChange || hasConditionsChange || hasGenderChange ||
                 hasCuisineChange || hasMotivationChange || hasImageChange;
 
         updateProfileBtn.setEnabled(hasChanges);
@@ -602,11 +614,20 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void logoutUser() {
-        profileManager.signOut(); // This already clears the cache
-        Intent intent = new Intent(ProfileActivity.this, SignInSignUpActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        finish();
+        CustomAlertDialog customAlertDialog = new CustomAlertDialog(ProfileActivity.this);
+        customAlertDialog
+                .setDialogTitle("Logout")
+                .setMessage("Your are about to be logged out!")
+                .setTitleAlignment(View.TEXT_ALIGNMENT_TEXT_START)
+                .setPositiveButton("Yes", () -> {
+                    profileManager.signOut(); // This already clears the cache
+                    Intent intent = new Intent(ProfileActivity.this, SignInSignUpActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
+                })
+                .setNegativeButton("Cancel", customAlertDialog::dismiss)
+                .show();
     }
 
     private void handleBack() {

@@ -5,25 +5,45 @@ plugins {
 
 android {
     namespace = "com.bunny.ml.smartchef"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bunny.ml.smartchef"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("D:\\Documents_And_Works\\ReleaseKeys\\SmartChef\\releaseKeys.jks")
+            storePassword = "Debojit16@"
+            keyAlias = "key0"
+            keyPassword = "Debojit16@"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+
+        debug {
+            buildFeatures {
+                buildConfig = true
+            }
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+            resValue("string", "app_name", "SmartChef! Debug")
         }
     }
     compileOptions {
@@ -52,7 +72,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
 
-
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.work:work-runtime:2.10.0")
+    implementation("com.google.guava:guava:32.1.3-android") //for update worker
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
@@ -61,6 +83,7 @@ dependencies {
         exclude(group = "glide-parent")
     }
 
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("com.airbnb.android:lottie:6.6.0")

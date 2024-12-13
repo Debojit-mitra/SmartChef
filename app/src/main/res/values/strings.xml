@@ -92,4 +92,22 @@
     <string name="let_us_know_will_provide_you_safer_options">Let us know, will provide you safer options.</string>
     <string name="any_allergies_or_medical_conditions">Any Allergies or medical conditions</string>
     <string name="no_history">No History</string>
+    <string name="connecting_to_server">Connecting to server…</string>
+    <string name="hi_what_can_i_cook_up_fo_you_today">Hi, What can i cook up fo you today?</string>
+    <string name="are_you_health_conscious">Are you health conscious?</string>
+    <string name="dialog_icon">dialog icon</string>
+    <string name="icon">Expandable Icon</string>
+    <string name="expand_icon">Expand More Icon</string>
+    <string name="theme">Theme</string>
+    <string name="theme_auto_button">Theme auto button</string>
+    <string name="theme_light_button">Theme light button</string>
+    <string name="theme_dark_button">Theme dark button</string>
+    <string name="zero">0</string>
+    <string name="developer">Developer</string>
+    <string name="about_developer">👋 Hi, I am Debojit Mitra, an Android Developer with 4+ years of development experience📱. I\'m passionate about creating user-friendly, high-performance apps 🚀. Currently pursuing MCA 🎓, with a focus on Android, Flutter, and AI/ML 🤖📊.</string>
+    <string name="ok">OK</string>
+    <string name="about_the_developer">About the developer</string>
+    <string name="auto_update_check">Auto update check</string>
+    <string name="notification_permission_required_for_auto_updates">Notification permission required for auto-updates</string>
+    <string name="quick_suggestions">Quick Suggestions</string>
 </resources>

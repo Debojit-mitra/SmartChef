@@ -163,6 +163,10 @@ public class ProfileManager {
         return cachedUserData != null && cachedUserData.isCookingMotivation();
     }
 
+    public boolean getHealthConscious() {
+        return cachedUserData != null && cachedUserData.isHealthConscious();
+    }
+
     // Profile Image Methods
     public void loadProfileImage(@NonNull CircleImageView imageView) {
         if (checkAuthentication(null)) {

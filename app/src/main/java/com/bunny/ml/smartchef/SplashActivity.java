@@ -2,6 +2,7 @@ package com.bunny.ml.smartchef;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +10,7 @@ import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bunny.ml.smartchef.activities.RegistrationActivity;
 import com.bunny.ml.smartchef.activities.SignInSignUpActivity;
@@ -27,18 +29,43 @@ public class SplashActivity extends AppCompatActivity {
     private LoadingDialog loadingDialog;
     private boolean isCheckingStatus = false;
     private ProfileManager profileManager;
+    private static final String THEME_PREFS = "theme_prefs";
+    private static final String CURRENT_THEME = "current_theme";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize these flags before any potential recreation
+        loadingDialog = new LoadingDialog(this);
+        profileManager = ProfileManager.getInstance(this);
+        isCheckingStatus = false;
+
+        // Set theme before super.onCreate()
+        int savedTheme = getSharedPreferences(THEME_PREFS, MODE_PRIVATE)
+                .getInt(CURRENT_THEME, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        AppCompatDelegate.setDefaultNightMode(savedTheme);
+
+        // Force the appropriate theme based on the saved setting
+        if (savedTheme == AppCompatDelegate.MODE_NIGHT_NO) {
+            setTheme(R.style.Theme_SmartChef_SplashScreen);
+        } else if (savedTheme == AppCompatDelegate.MODE_NIGHT_YES) {
+            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            setTheme(R.style.Theme_SmartChef_SplashScreen);
+        }
+
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
 
-        loadingDialog = new LoadingDialog(this);
-        profileManager = ProfileManager.getInstance(this);
+
+        // Re-initialize dialog in case of recreation
+        if (loadingDialog == null) {
+            loadingDialog = new LoadingDialog(this);
+        }
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (!isFinishing() && !isCheckingStatus) {
+            // Check if activity and dialog are still valid
+            if (!isFinishing() && !isCheckingStatus && loadingDialog != null) {
                 loadingDialog.show("Loading");
                 isCheckingStatus = true;
                 checkUserStatus();

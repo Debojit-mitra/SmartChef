@@ -7,16 +7,17 @@
 
     <style name="Theme.SmartChef" parent="Base.Theme.SmartChef" />
 
-    <style name="Theme.Sugoi.SplashScreen" parent="Theme.SmartChef">
+    <style name="Theme.SmartChef.SplashScreen" parent="Theme.SmartChef">
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">
             @mipmap/ic_launcher_round
         </item>
         <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="s">800</item>
         <item name="android:windowSplashScreenBehavior" tools:targetApi="tiramisu">icon_preferred
         </item>
-        <item name="android:windowSplashScreenBackground" tools:targetApi="s">?attr/colorPrimary
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/mode_black
         </item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="postSplashScreenTheme">@style/Theme.SmartChef</item>
     </style>
 
     <style name="Theme.Sugoi.TryModel" parent="Theme.SmartChef">
