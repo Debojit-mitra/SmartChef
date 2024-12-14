@@ -1,9 +1,13 @@
 package com.bunny.ml.smartchef.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,15 +26,17 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.bunny.ml.smartchef.MainActivity;
 import com.bunny.ml.smartchef.R;
 import com.bunny.ml.smartchef.firebase.ProfileManager;
 import com.bunny.ml.smartchef.models.UserData;
+import com.bunny.ml.smartchef.utils.CookingMotivationManager;
 import com.bunny.ml.smartchef.utils.CustomAlertDialog;
 import com.bunny.ml.smartchef.utils.LoadingDialog;
+import com.bunny.ml.smartchef.utils.PermissionManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -56,6 +62,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
+    private static final int NOTIFICATION_PERMISSION_CODE = 100;
     private CircleImageView profileImage;
     private TextInputEditText nameEditText, conditionsEditText;
     private MaterialAutoCompleteTextView dobEditText;
@@ -80,6 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
     private UserData originalUserData;
     private Uri originalImageUri;
     private boolean hasChanges = false;
+    private CookingMotivationManager cookingMotivationManager;
 
     private static MainActivityCallback mainActivityCallback;
 
@@ -97,6 +105,8 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
+
+        cookingMotivationManager = new CookingMotivationManager(this);
 
         initializeViews();
         initializeLoadingDialog();
@@ -229,7 +239,29 @@ public class ProfileActivity extends AppCompatActivity {
         genderRadioGroup.setOnCheckedChangeListener((group, checkedId) -> checkForChanges());
 
         // Cooking motivation change listener
-        cookingMotivationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> checkForChanges());
+        cookingMotivationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (!PermissionManager.hasNotificationPermission(this)) {
+                        showNotificationPermissionDialog();
+                        return;
+                    }
+                }
+                // Initialize manager if needed
+                if (cookingMotivationManager == null) {
+                    cookingMotivationManager = new CookingMotivationManager(this);
+                }
+                // Schedule motivation notifications
+                cookingMotivationManager.scheduleDailyMotivation();
+            } else {
+                if (cookingMotivationManager == null) {
+                    cookingMotivationManager = new CookingMotivationManager(this);
+                }
+                // Cancel motivation notifications
+                cookingMotivationManager.cancelDailyMotivation();
+            }
+            new Handler(Looper.getMainLooper()).postDelayed(this::checkForChanges, 500);
+        });
 
         healthConsciousSwitch.setOnCheckedChangeListener((compoundButton, b) -> checkForChanges());
     }
@@ -628,6 +660,55 @@ public class ProfileActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", customAlertDialog::dismiss)
                 .show();
+    }
+
+    private void showNotificationPermissionDialog() {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> new CustomAlertDialog(ProfileActivity.this)
+                .setDialogTitle("Notification Permission")
+                .setMessage("SmartChef needs notification permission for two reasons:\n\n1. For sending cooking motivations.\n2. To keep you updated with the latest app versions.\n\nWould you like to enable notifications?")
+                .setPositiveButton("Enable", () -> {
+                    PermissionManager.setNotificationPermissionAsked(this, true);
+                    requestNotificationPermission();
+                })
+                .setNegativeButton("No Thanks", () -> {
+                    cookingMotivationSwitch.setChecked(false);
+                    cookingMotivationManager.cancelDailyMotivation();
+                    PermissionManager.setNotificationPermissionAsked(this, true);
+                    PermissionManager.setNotificationPermissionDenied(this, true);
+                    PermissionManager.setAutoUpdateEnabled(ProfileActivity.this, false);
+                    // Cancel any scheduled update checks
+                    androidx.work.WorkManager.getInstance(ProfileActivity.this)
+                            .cancelUniqueWork("update_check");
+                })
+                .show(), 500);
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                    new String[]{"android.permission.POST_NOTIFICATIONS"},
+                    NOTIFICATION_PERMISSION_CODE
+            );
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                cookingMotivationManager.scheduleDailyMotivation();
+                PermissionManager.setNotificationPermissionDenied(this, false);
+            } else {
+                // Permission denied
+                cookingMotivationSwitch.setChecked(false);
+                cookingMotivationManager.cancelDailyMotivation();
+                PermissionManager.setNotificationPermissionDenied(this, true);
+                PermissionManager.setAutoUpdateEnabled(this, false);
+            }
+        }
     }
 
     private void handleBack() {

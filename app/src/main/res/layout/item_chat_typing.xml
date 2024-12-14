@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="8dp">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/chat_bubble_ai"
-        android:padding="12dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+    android:background="@drawable/chat_bubble_ai"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="48dp"
+    android:layout_marginBottom="8dp"
+    android:paddingBottom="5dp"
+    android:padding="12dp">
 
             <View
                 android:id="@+id/dot1"
@@ -39,6 +34,5 @@
                 android:layout_margin="2dp"
                 android:background="@drawable/ic_round_typing_dot"
                 android:backgroundTint="@color/mode_inverse" />
-        </LinearLayout>
-    </LinearLayout>
-</FrameLayout>
+
+</LinearLayout>

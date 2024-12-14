@@ -110,4 +110,5 @@
     <string name="auto_update_check">Auto update check</string>
     <string name="notification_permission_required_for_auto_updates">Notification permission required for auto-updates</string>
     <string name="quick_suggestions">Quick Suggestions</string>
+    <string name="cooking_motivation_for_today">Cooking Motivation for today</string>
 </resources>

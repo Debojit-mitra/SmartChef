@@ -26,8 +26,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<ChatMessage> messages;
     private final SimpleDateFormat timeFormat;
     private static final int VIEW_TYPE_LOADING = 3;
-
+    private static final int VIEW_TYPE_TYPING = 4;
+    private boolean isTyping = false;
+    private int lastAnimatedPosition = -1;
     private boolean isLoadingMore = false;
+    private boolean shouldAnimate = false;
     private OnLoadMoreListener loadMoreListener;
 
     public interface OnLoadMoreListener {
@@ -62,6 +65,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case VIEW_TYPE_AI:
                 View aiView = inflater.inflate(R.layout.item_chat_ai, parent, false);
                 return new MessageViewHolder(aiView);
+            case VIEW_TYPE_TYPING:
+                View typingView = inflater.inflate(R.layout.item_chat_typing, parent, false);
+                return new TypingViewHolder(typingView);
             default:
                 throw new IllegalArgumentException("Invalid view type");
         }
@@ -83,24 +89,77 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (message.getTimestamp() != null) {
                 messageHolder.timeText.setText(timeFormat.format(message.getTimestamp()));
             }
+
+            setAnimation(holder.itemView, position);
+
+        } else if (holder instanceof TypingViewHolder) {
+            // Restart animations when typing indicator is bound
+            ((TypingViewHolder) holder).startAnimations();
+            setAnimation(holder.itemView, position);
         }
-        // No need to do anything for TypingViewHolder as it's just an animation
+    }
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty()) {
+            // If this is a content update, just update the text without animation
+            if (holder instanceof MessageViewHolder && position < messages.size()) {
+                MessageViewHolder messageHolder = (MessageViewHolder) holder;
+                ChatMessage message = messages.get(position);
+                if (getItemViewType(position) == VIEW_TYPE_AI) {
+                    messageHolder.messageText.setFormattedText(message.getContent());
+                } else {
+                    messageHolder.messageText.setText(message.getContent());
+                }
+            }
+        } else {
+            // Call the simple version if no payloads
+            onBindViewHolder(holder, position);
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.itemView.clearAnimation();
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        if (shouldAnimate && position > lastAnimatedPosition && position >= getItemCount() - 2) {
+            Animation slideIn = AnimationUtils.loadAnimation(viewToAnimate.getContext(), R.anim.slide_in_up);
+            viewToAnimate.startAnimation(slideIn);
+            lastAnimatedPosition = position;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        return messages.size() + (isTyping ? 1 : 0);
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (position == messages.size() && isTyping) {
+            return VIEW_TYPE_TYPING;
+        }
         if (messages.get(position) == null) {
             return VIEW_TYPE_LOADING;
         }
         return messages.get(position).isAi() ? VIEW_TYPE_AI : VIEW_TYPE_USER;
     }
 
+    public void showTyping(boolean show) {
+        if (isTyping != show) {
+            isTyping = show;
+            if (show) {
+                notifyItemInserted(messages.size());
+            } else {
+                notifyItemRemoved(messages.size());
+            }
+        }
+    }
+
     public void addMessages(List<ChatMessage> newMessages, boolean isFirstPage) {
+        shouldAnimate = false;
         if (isFirstPage) {
             List<ChatMessage> updatedList = new ArrayList<>(newMessages);
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
@@ -147,6 +206,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void addMessage(ChatMessage message) {
+        shouldAnimate = true;
         messages.add(message);
         notifyItemInserted(messages.size() - 1);
     }
@@ -157,7 +217,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ChatMessage lastMessage = messages.get(lastIndex);
             if (lastMessage != null) {
                 lastMessage.setContent(content);
-                notifyItemChanged(lastIndex); // Remove the payload to ensure full update
+                shouldAnimate = false;
+                notifyItemChanged(lastIndex, "content_update"); // Remove the payload to ensure full update
             }
         }
     }
@@ -237,6 +298,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             dot1 = itemView.findViewById(R.id.dot1);
             dot2 = itemView.findViewById(R.id.dot2);
             dot3 = itemView.findViewById(R.id.dot3);
+        }
+
+        public void startAnimations() {
+            // Clear any existing animations
+            dot1.clearAnimation();
+            dot2.clearAnimation();
+            dot3.clearAnimation();
 
             // Start animations with delays
             startDotAnimation(dot1, 0);
@@ -247,6 +315,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private void startDotAnimation(View dot, int delay) {
             Animation animation = AnimationUtils.loadAnimation(dot.getContext(), R.anim.typing_dot);
             animation.setStartOffset(delay);
+            animation.setRepeatCount(Animation.INFINITE); // Make sure animation repeats
             dot.startAnimation(animation);
         }
     }

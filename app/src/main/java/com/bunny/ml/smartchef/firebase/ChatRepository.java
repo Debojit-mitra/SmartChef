@@ -26,7 +26,7 @@ public class ChatRepository {
     private static final String CHAT_METADATA_COLLECTION = "chat_metadata";
     private static final int MAX_CHATS = 5;
     private static final int MESSAGES_PER_PAGE = 20;
-    private static final int MAX_STARRED_CHATS = 3;
+    private static final int MAX_STARRED_CHATS = 5;
 
     public ChatRepository() {
         this.db = FirebaseFirestore.getInstance();

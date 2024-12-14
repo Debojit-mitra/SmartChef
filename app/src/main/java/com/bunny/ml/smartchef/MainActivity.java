@@ -3,12 +3,12 @@ package com.bunny.ml.smartchef;
 import static com.bunny.ml.smartchef.activities.SettingsActivity.UPDATE_CHECK_INTERVAL;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.ExistingPeriodicWorkPolicy;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bunny.ml.smartchef.activities.AIChatActivity;
@@ -33,12 +34,12 @@ import com.bunny.ml.smartchef.firebase.ChatRepository;
 import com.bunny.ml.smartchef.firebase.ProfileManager;
 import com.bunny.ml.smartchef.models.Chat;
 import com.bunny.ml.smartchef.utils.AppUpdater;
+import com.bunny.ml.smartchef.utils.CookingMotivationManager;
 import com.bunny.ml.smartchef.utils.CustomAlertDialog;
 import com.bunny.ml.smartchef.utils.PermissionManager;
 import com.bunny.ml.smartchef.utils.SwipeCallback;
 import com.bunny.ml.smartchef.utils.UpdateWorker;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.Objects;
@@ -47,12 +48,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ProfileActivity.MainActivityCallback {
 
+    private static final String TAG = "MainActivity";
     private static final int NOTIFICATION_PERMISSION_CODE = 100;
-    private FirebaseAuth auth;
     private ProfileManager profileManager;
     private CircleImageView profile_image;
-    private TextView hello_user_textview;
-    private LinearLayout layout_try_model_btn, layout_chat_btn;
     private LottieAnimationView animationView;
     private TextView history_textview;
     private RecyclerView chatHistoryRecyclerView;
@@ -66,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
-        auth = FirebaseAuth.getInstance();
 
         // Initialize views and base functionality
         initializeViews();
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
         // Check if opened from notification
         if (getIntent().getBooleanExtra("show_update", false)) {
             appUpdater.checkForUpdatesFromNotification();
-        }  else {
+        } else {
             // Always check for updates when app opens
             appUpdater.checkForUpdates(false);
         }
@@ -100,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
     private void initializeViews() {
         profile_image = findViewById(R.id.profile_image);
         profileManager = ProfileManager.getInstance(MainActivity.this);
-        hello_user_textview = findViewById(R.id.hello_user_textview);
+        TextView hello_user_textview = findViewById(R.id.hello_user_textview);
         history_textview = findViewById(R.id.history_textview);
-        layout_try_model_btn = findViewById(R.id.layout_try_model_btn);
-        layout_chat_btn = findViewById(R.id.layout_chat_btn);
+        LinearLayout layout_try_model_btn = findViewById(R.id.layout_try_model_btn);
+        LinearLayout layout_chat_btn = findViewById(R.id.layout_chat_btn);
         animationView = findViewById(R.id.animationView);
 
         profile_image.setOnClickListener(view12 -> setUpBottomSheet());
@@ -120,22 +117,16 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
 
         setupSwipeDelete();
 
-        layout_try_model_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, TryModelActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
+        layout_try_model_btn.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, TryModelActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
-        layout_chat_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AIChatActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
+        layout_chat_btn.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, AIChatActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> animationView.playAnimation(), 500);
@@ -151,24 +142,23 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
     }
 
     private void showNotificationPermissionDialog() {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            new CustomAlertDialog(MainActivity.this)
-                    .setDialogTitle("Notification Permission")
-                    .setMessage("SmartChef needs notification permission for two reasons:\n\n1. For sending cooking motivations.\n2. To keep you updated with the latest app versions.\n\nWould you like to enable notifications?")
-                    .setPositiveButton("Enable", () -> {
-                        PermissionManager.setNotificationPermissionAsked(this, true);
-                        requestNotificationPermission();
-                    })
-                    .setNegativeButton("No Thanks", () -> {
-                        PermissionManager.setNotificationPermissionAsked(this, true);
-                        PermissionManager.setNotificationPermissionDenied(this, true);
-                        PermissionManager.setAutoUpdateEnabled(MainActivity.this, false);
-                        // Cancel any scheduled update checks
-                        androidx.work.WorkManager.getInstance(MainActivity.this)
-                                .cancelUniqueWork("update_check");
-                    })
-                    .show();
-        }, 500);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> new CustomAlertDialog(MainActivity.this)
+                .setDialogTitle("Notification Permission")
+                .setMessage("SmartChef needs notification permission for two reasons:\n\n1. For sending cooking motivations.\n2. To keep you updated with the latest app versions.\n\nWould you like to enable notifications?")
+                .setPositiveButton("Enable", () -> {
+                    PermissionManager.setNotificationPermissionAsked(this, true);
+                    requestNotificationPermission();
+                })
+                .setNegativeButton("No Thanks", () -> {
+                    turnOffMotivation();
+                    PermissionManager.setNotificationPermissionAsked(this, true);
+                    PermissionManager.setNotificationPermissionDenied(this, true);
+                    PermissionManager.setAutoUpdateEnabled(MainActivity.this, false);
+                    // Cancel any scheduled update checks
+                    androidx.work.WorkManager.getInstance(MainActivity.this)
+                            .cancelUniqueWork("update_check");
+                })
+                .show(), 500);
     }
 
     private void requestNotificationPermission() {
@@ -187,6 +177,10 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
         if (requestCode == NOTIFICATION_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted
+                if (profileManager.getCookingMotivation()){
+                    CookingMotivationManager cookingMotivationManager = new CookingMotivationManager(this);
+                    cookingMotivationManager.scheduleDailyMotivation();
+                }
                 PermissionManager.setNotificationPermissionDenied(this, false);
                 PermissionManager.setAutoUpdateEnabled(this, true);
                 if (appUpdater != null) {
@@ -194,9 +188,21 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
                 }
             } else {
                 // Permission denied
+                turnOffMotivation();
                 PermissionManager.setNotificationPermissionDenied(this, true);
                 PermissionManager.setAutoUpdateEnabled(this, false);
             }
+        }
+    }
+
+    private void turnOffMotivation() {
+        if (profileManager.getCookingMotivation()){
+            profileManager.setCookingMotivation(false, new ProfileManager.BaseCallback() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, error);
+                }
+            });
         }
     }
 
@@ -212,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
         androidx.work.WorkManager.getInstance(this)
                 .enqueueUniquePeriodicWork(
                         "update_check",
-                        androidx.work.ExistingPeriodicWorkPolicy.REPLACE,
+                        ExistingPeriodicWorkPolicy.REPLACE,
                         updateWorkRequest
                 );
     }
@@ -325,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
                     // Delete chat
                     CustomAlertDialog dialog = new CustomAlertDialog(MainActivity.this);
                     dialog.setIcon(Objects.requireNonNull(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_round_delete)))
-                            .setIconTint(ContextCompat.getColor(MainActivity.this, R.color.delete))
+                            .setIconTint(ContextCompat.getColor(MainActivity.this, R.color.mode_inverse))
                             .setMessage("Are you sure you want to delete this chat?")
                             .setPositiveButton("Yes", () -> {
                                 chatRepository.deleteChat(currentChat.getDocumentId());
@@ -339,8 +345,6 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
                             .show();
 
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    boolean newStarredState = !currentChat.isStarred();
-
                     if (currentChat.isStarred()) {
                         // Show confirmation dialog for unstarring
                         CustomAlertDialog dialog = new CustomAlertDialog(MainActivity.this);
@@ -398,6 +402,14 @@ public class MainActivity extends AppCompatActivity implements ProfileActivity.M
         };
 
         new ItemTouchHelper(swipeCallback).attachToRecyclerView(chatHistoryRecyclerView);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AppUpdater.REQUEST_INSTALL_PACKAGES) {
+            appUpdater.onActivityResult(requestCode, resultCode);
+        }
     }
 
     @Override

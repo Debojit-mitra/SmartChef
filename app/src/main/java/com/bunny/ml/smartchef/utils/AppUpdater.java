@@ -47,6 +47,8 @@ public class AppUpdater {
     private final OkHttpClient client;
     public MaterialAlertDialogBuilder progressDialogBuilder;
     private androidx.appcompat.app.AlertDialog progressDialog;
+    private String pendingNewVersion;
+    private String pendingDownloadUrl;
 
     public interface UpdateCheckCallback {
         void onUpdateAvailable(boolean available);
@@ -227,6 +229,8 @@ public class AppUpdater {
 
 
     private void handleUpdateClick(String newVersion, String downloadUrl) {
+        this.pendingNewVersion = newVersion;
+        this.pendingDownloadUrl = downloadUrl;
         if (!context.getPackageManager().canRequestPackageInstalls()) {
             showInstallPermissionDialog(newVersion, downloadUrl);
         } else {
@@ -254,6 +258,10 @@ public class AppUpdater {
                 .show();
     }
 
+    private void showInstallPermissionDialog(){
+        showInstallPermissionDialog(pendingNewVersion, pendingDownloadUrl);
+    }
+
     private void storeDownloadInfo(String newVersion, String downloadUrl) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit()
@@ -261,6 +269,21 @@ public class AppUpdater {
                 .putString("pendingDownloadUrl", downloadUrl)
                 .apply();
     }
+
+    public void onActivityResult(int requestCode, int resultCode) {
+        if (requestCode == REQUEST_INSTALL_PACKAGES) {
+            if (context.getPackageManager().canRequestPackageInstalls()) {
+                // Permission granted, show download confirmation
+                if (pendingNewVersion != null && pendingDownloadUrl != null) {
+                    showDownloadConfirmationDialog(pendingNewVersion, pendingDownloadUrl);
+                }
+            } else {
+                // Permission still not granted, show permission dialog again
+                showInstallPermissionDialog();
+            }
+        }
+    }
+
 
     public void checkAndDownloadPendingUpdate() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

@@ -27,7 +27,6 @@ public class ChatWebSocket {
     private final Handler mainHandler;
     private boolean isConnected = false;
     private static final int RECONNECT_DELAY = 5000; // 5 seconds
-    private static final int MAX_RETRIES = 3;
     private int retryCount = 0;
     private ProfileManager profileManager;
     private boolean isReconnecting = false;
@@ -143,7 +142,10 @@ public class ChatWebSocket {
 
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason) {
+                Log.e("ChatWebSocket", "WebSocketClosed");
                 webSocket.close(1000, null);
+                callback.onDisconnected();
+                attemptReconnect();
             }
 
             @Override
@@ -159,7 +161,7 @@ public class ChatWebSocket {
     }
 
     private void attemptReconnect() {
-        if (retryCount < MAX_RETRIES) {
+        if (retryCount < Integer.MAX_VALUE) {
             retryCount++;
             mainHandler.postDelayed(this::connect, RECONNECT_DELAY);
         }

@@ -52,6 +52,7 @@
             android:textAllCaps="false"
             android:textColor="@color/mode_inverse"
             android:visibility="gone"
+            android:textStyle="bold"
             app:rippleColor="@color/ripple_effect" />
 
 

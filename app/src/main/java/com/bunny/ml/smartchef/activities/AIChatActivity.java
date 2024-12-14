@@ -55,6 +55,7 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
     private FirebaseAuth firebaseAuth;
     private boolean hasOldMessages = false;
     private boolean isServerConnected = false;
+    private boolean isMessagePending = false;
 
     //pagination
     private DocumentSnapshot lastVisibleMessage;
@@ -102,8 +103,6 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
 
         backBtn.setOnClickListener(v -> handleBack());
 
-        sendButton.setOnClickListener(v -> sendMessage());
-
         setupSuggestionAdapter();
 
         // Add keyboard visibility listener
@@ -122,14 +121,16 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
         });
 
         sendButton.setOnClickListener(v -> {
+            String messageText = messageInput.getText().toString().trim();
+            if (TextUtils.isEmpty(messageText)) return;
             if (isServerConnected) {
-                sendMessage();
+                sendMessage(messageText);
             } else {
                 // Attempt to reconnect
                 if (chatWebSocket != null) {
                     chatWebSocket.connect();
                 }
-
+                isMessagePending = true;
                 // Show toast to inform user
                 Toast.makeText(this, "Connecting to server...", Toast.LENGTH_SHORT).show();
                 return;
@@ -148,10 +149,11 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
             messageInput.setText(suggestion);
 
             if (isServerConnected) {
-                sendMessage();
+                sendMessage(suggestion);
                 layoutSuggestions.setVisibility(View.GONE);
             } else {
                 // Show connection toast and attempt to reconnect
+                isMessagePending = true;
                 Toast.makeText(this, getString(R.string.connecting_to_server), Toast.LENGTH_SHORT).show();
                 if (chatWebSocket != null) {
                     chatWebSocket.connect();
@@ -315,9 +317,7 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
         }
     }
 
-    private void sendMessage() {
-        String messageText = messageInput.getText().toString().trim();
-        if (TextUtils.isEmpty(messageText)) return;
+    private void sendMessage(String messageText) {
 
         if (layout_greet_user.getVisibility() == View.VISIBLE) {
             layout_greet_user.setVisibility(View.GONE);
@@ -337,7 +337,14 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
         );
 
         chatAdapter.addMessage(userMessage);
-        scrollToBottom();
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                chatAdapter.showTyping(true);
+                scrollToBottom();
+            }
+        }, 400);
+
 
         // Save message to Firebase
         chatRepository.saveMessage(userMessage);
@@ -351,12 +358,20 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
     // WebSocket callback implementations
     @Override
     public void onConnected() {
+        if (isMessagePending){
+            String messageText = messageInput.getText().toString().trim();
+            if (!TextUtils.isEmpty(messageText)){
+                sendMessage(messageText);
+            }
+            isMessagePending = false;
+        }
         isServerConnected = true;
     }
 
     @Override
     public void onMessageReceived(String content) {
         runOnUiThread(() -> {
+            chatAdapter.showTyping(false);
             if (currentAiMessage == null) {
                 currentAiMessage = new ChatMessage(
                         content,
@@ -401,6 +416,7 @@ public class AIChatActivity extends AppCompatActivity implements ChatWebSocket.C
         Log.e(TAG, error);
 
         runOnUiThread(() -> {
+            chatAdapter.showTyping(false);
             // Only show error if user was actively trying to send a message
             if (!messageInput.isEnabled()) {
                 messageInput.setEnabled(true);

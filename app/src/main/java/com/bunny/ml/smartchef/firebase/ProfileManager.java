@@ -167,6 +167,28 @@ public class ProfileManager {
         return cachedUserData != null && cachedUserData.isHealthConscious();
     }
 
+    public void setCookingMotivation(boolean enabled, BaseCallback callback) {
+        if (checkAuthentication(callback)) return;
+
+        String uid = getCurrentUserId();
+
+        // Update database
+        db.collection(USERS_COLLECTION)
+                .document(uid)
+                .update("cookingMotivation", enabled)
+                .addOnSuccessListener(aVoid -> {
+                    // Update cache if it exists
+                    if (cachedUserData != null) {
+                        cachedUserData.setCookingMotivation(enabled);
+                    }
+                    // Since BaseCallback doesn't have onSuccess, we don't need to call it
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error updating cooking motivation: " + e.getMessage());
+                    callback.onFailure(e.getMessage());
+                });
+    }
+
     // Profile Image Methods
     public void loadProfileImage(@NonNull CircleImageView imageView) {
         if (checkAuthentication(null)) {
