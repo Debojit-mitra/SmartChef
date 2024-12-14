@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bluish">#FFAA41</color>
 
     <color name="mode">#1F1D1B</color>
     <color name="mode_black">#1F1D1B</color>
@@ -10,9 +11,11 @@
     <color name="mode_white">#FFF4E5</color>
     <color name="mode_inverse">#FFF4E5</color>
     <color name="mode_inverse_extra">#958F86</color>
-    <color name="mode_background">#141118</color>
+    <color name="mode_background">#0D0800</color>
     <color name="ripple_effect">#316B6B6B</color>
     <color name="ripple_effect_inverse">#31000000</color>
+    <color name="star">#FFC107</color>
+    <color name="delete">#FF4444</color>
 
 
     <!-- Switch Track Colors -->

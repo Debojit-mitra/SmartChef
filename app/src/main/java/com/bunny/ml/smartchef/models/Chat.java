@@ -8,17 +8,19 @@ public class Chat {
     private String lastMessage;
     private Timestamp lastMessageTime;
     private boolean isAiLastMessage;
+    private boolean starred;
 
     public Chat() {
         // Required empty constructor for Firestore
     }
 
-    public Chat(String documentId, String chatId, String lastMessage, Timestamp lastMessageTime, boolean isAiLastMessage) {
+    public Chat(String documentId, String chatId, String lastMessage, Timestamp lastMessageTime, boolean isAiLastMessage, boolean starred) {
         this.documentId = documentId;
         this.chatId = chatId;
         this.lastMessage = lastMessage;
         this.lastMessageTime = lastMessageTime;
         this.isAiLastMessage = isAiLastMessage;
+        this.starred = starred;
     }
 
     public String getDocumentId() {
@@ -59,5 +61,13 @@ public class Chat {
 
     public void setAiLastMessage(boolean aiLastMessage) {
         isAiLastMessage = aiLastMessage;
+    }
+
+    public boolean isStarred() {
+        return starred;
+    }
+
+    public void setStarred(boolean starred) {
+        this.starred = starred;
     }
 }

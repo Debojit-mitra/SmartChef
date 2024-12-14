@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="otp_box_size">48</dimen>
+    <dimen name="genre_item_width">160dp</dimen>
+    <dimen name="large_screen_width">600dp</dimen>
 </resources>

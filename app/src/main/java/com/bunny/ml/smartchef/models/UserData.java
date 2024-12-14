@@ -19,6 +19,7 @@ public class UserData {
     private List<String> cuisinePreferences;
     private String conditions;
     private String profilePhotoUrl;
+    private boolean healthConscious;
     private boolean cookingMotivation;
 
     // Empty constructor required for Firestore
@@ -76,6 +77,11 @@ public class UserData {
 
         public Builder withCookingMotivation(boolean cookingMotivation) {
             userData.cookingMotivation = cookingMotivation;
+            return this;
+        }
+
+        public Builder withHealthConscious(boolean healthConscious) {
+            userData.healthConscious = healthConscious;
             return this;
         }
 
@@ -140,6 +146,14 @@ public class UserData {
 
     public List<String> getCuisinePreferences() {
         return cuisinePreferences;
+    }
+
+    public boolean isHealthConscious() {
+        return healthConscious;
+    }
+
+    public void setHealthConscious(boolean healthConscious) {
+        this.healthConscious = healthConscious;
     }
 
     public void setCuisinePreferences(List<String> cuisinePreferences) {

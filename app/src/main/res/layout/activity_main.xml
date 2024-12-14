@@ -74,7 +74,7 @@
             android:id="@+id/animationView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="90dp"
             app:lottie_autoPlay="false"
             app:lottie_fileName="home_lottie.json"
             app:lottie_loop="true" />
@@ -226,7 +226,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="10dp"
                         android:clickable="true"
                         android:text="@string/history"
                         android:textColor="@color/mode_inverse"

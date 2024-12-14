@@ -59,6 +59,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
             holder.senderImage.setImageResource(R.drawable.ic_person);
         }
 
+        holder.starIcon.setVisibility(chat.isStarred() ? View.VISIBLE : View.GONE);
 
         // Set click listener
         holder.itemView.setOnClickListener(v -> {
@@ -71,6 +72,15 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
                         R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+    }
+
+    public Chat getChatAt(int position) {
+        return chatList.get(position);
+    }
+
+    public void removeChat(int position) {
+        chatList.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
@@ -87,13 +97,14 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
     public static class ChatHistoryViewHolder extends RecyclerView.ViewHolder {
         TextView lastMessageText;
         TextView timeText;
-        ImageView senderImage;
+        ImageView senderImage, starIcon;
 
         ChatHistoryViewHolder(@NonNull View itemView) {
             super(itemView);
             lastMessageText = itemView.findViewById(R.id.lastMessageText);
             timeText = itemView.findViewById(R.id.timeText);
             senderImage = itemView.findViewById(R.id.senderImage);
+            starIcon = itemView.findViewById(R.id.starIcon);
         }
     }
 }

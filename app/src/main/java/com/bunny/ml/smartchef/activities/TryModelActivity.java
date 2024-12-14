@@ -1,7 +1,5 @@
 package com.bunny.ml.smartchef.activities;
 
-import static com.bunny.ml.smartchef.utils.SharedData.BASE_URL;
-
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bunny.ml.smartchef.BuildConfig;
 import com.bunny.ml.smartchef.R;
 import com.bunny.ml.smartchef.adapters.RecipeAdapter;
 import com.bunny.ml.smartchef.models.Recipe;
@@ -51,6 +50,7 @@ import java.util.Objects;
 public class TryModelActivity extends AppCompatActivity {
 
     private static final String TAG = "TryModelActivity";
+    private static final String BASE_URL = BuildConfig.API_BASE_URL;
     private static final int MIN_TOP_N = 5;
     private static final int MAX_TOP_N = 15;
     private static final int STEP_SIZE = 5;
@@ -123,7 +123,7 @@ public class TryModelActivity extends AppCompatActivity {
         recipeAdapter = new RecipeAdapter(this);
         loadingDialog = new LoadingDialog(this);
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> animationView.playAnimation(),500);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> animationView.playAnimation(), 500);
     }
 
     private void loadSavedPreferences() {

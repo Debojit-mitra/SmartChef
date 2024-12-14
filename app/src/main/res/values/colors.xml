@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bluish">#E09232</color>
 
     <color name="mode">#FFF4E5</color>
     <color name="mode_black">#1F1D1B</color>
@@ -14,6 +15,8 @@
     <color name="mode_background">#FFFFFDF7</color>
     <color name="ripple_effect">#31000000</color>
     <color name="ripple_effect_inverse">#316B6B6B</color>
+    <color name="star">#FFC107</color>
+    <color name="delete">#FF4444</color>
 
 
     <!-- Switch Track Colors (Light Mode) -->
