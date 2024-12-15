@@ -50,7 +50,7 @@ SmartChef is an innovative Android app blending AI-driven recipe recommendations
 
 ### 📱ScreenShots
 
-## | <img src="https://i.ibb.co/8Y12YLV/Screenshot-20241213-165638-Smart-Chef.jpg" width="250" height="auto"> | <img src="https://i.ibb.co/vHfdpyr/Screenshot-20241213-165646-Smart-Chef.jpg" width="250" height="auto"> | <img src="https://i.ibb.co/jwL8B1J/Screenshot-20241213-165715-Smart-Chef.jpg" width="250" height="auto"> |
+## | <img src="https://i.ibb.co/8Y12YLV/Screenshot-20241213-165638-Smart-Chef.jpg" width="250" height="auto"> | <img src="https://i.ibb.co/vHfdpyr/Screenshot-20241213-165646-Smart-Chef.jpg" width="250" height="auto"> | <img src="https://i.ibb.co/y83LBCY/Screenshot-20241213-165715-Smart-Chef.jpg" width="250" height="auto"> |
 
 ## | <img src="https://i.ibb.co/0jYVsZB/Screenshot-20241213-165743-Smart-Chef.jpg" width="250" height="auto"> | <img src="https://i.ibb.co/BqGMcgs/Screenshot-20241213-165749-Smart-Chef.jpg" width="250" height="auto"> | <img src="https://i.ibb.co/18PjSnh/Screenshot-20241213-170000-Smart-Chef.jpg" width="250" height="auto"> |
 
