@@ -69,7 +69,11 @@ SmartChef is an innovative Android app blending AI-driven recipe recommendations
 3. Build the project in Android Studio.
 
 ---
-
+## 💻 Collaborators 
+- [Mortaza Behesti Al Saeed](https://github.com/saeed0xf)
+- [Debojit Mitra](https://github.com/Debojit-mitra)
+- [Shashanka Gogoi](https://github.com/r3lativee)
+---
 ## 📚 Contributing
 
 1. Fork the repository.
