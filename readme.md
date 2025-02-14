@@ -62,7 +62,7 @@ SmartChef is an innovative Android app blending AI-driven recipe recommendations
 > If you want to try out the chat and models, you will need to either modify the code to run it on your own setup or contact me to enable the server.
 
 1. Clone the repository:
-   ```bash
+   ```sh
    git clone https://github.com/Debojit-mitra/SmartChef.git
    ```
 2. Add `google-services.json` to the app directory.
